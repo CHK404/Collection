@@ -517,45 +517,83 @@ namespace WindowsFormsApp_14_Collection
             #endregion
         }
 
+        //ex
+
+        loginData_1<string, string> loginData = new loginData_1<string, string>();
+        logindata_2<string, string> logindata = new logindata_2<string, string>();
         private void f_Select_Click(object sender, EventArgs e)
         {
-            var fileContent = string.Empty;
             var filePath = string.Empty;
 
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.InitialDirectory = "C:\\";
                 openFileDialog.RestoreDirectory = true;
-                
+                openFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
+
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     filePath = openFileDialog.FileName;
-                    var filestream = openFileDialog.OpenFile();
-                }
-
-                using (StreamReader sr = new StreamReader("account.txt"))
-                {
-                    string line;
-                    loginData_1<string, string> loginData = new loginData_1<string, string>();
-                    logindata_2<string, string> logindata = new logindata_2<string, string>();
-                    while ((line = sr.ReadLine()) != null)
+                    try
                     {
-                        var splitData = line.Split(',');
-
-                        if (splitData.Length >= 2)
+                        using (StreamReader sr = new StreamReader(filePath))
                         {
-                            loginData.AddPW(splitData[0], splitData[1]);
-
-                            if (splitData.Length >= 3)
+                            string line;
+                            while ((line = sr.ReadLine()) != null)
                             {
-                                logindata.AddPN(splitData[0], splitData[2]);
+                                var splitData = line.Split(',');
+                                if (splitData.Length >= 2 && splitData.Length < 3)
+                                {
+                                    loginData.AddPW(splitData[0], splitData[1]);
+                                    logindata.AddPN(splitData[0], "No PhoneNumber");
+                                } else if (splitData.Length >= 3)
+                                {
+                                    loginData.AddPW(splitData[0], splitData[1]);
+                                    logindata.AddPN(splitData[0], splitData[2]);
+                                }
                             }
                         }
-
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"파일을 읽는 중 오류 발생: {ex.Message}");
                     }
                 }
             }
 
+        }
+        private void Login_Click(object sender, EventArgs e)
+        {
+            string userID = ID.Text;
+            string userPW = PW.Text;
+
+            if (string.IsNullOrWhiteSpace(userID))
+            {
+                MessageBox.Show("아이디를 입력해주세요!");
+                return;
+            }
+            else if (loginData.idExist(userID))
+            {
+                if (string.IsNullOrWhiteSpace(userPW))
+                {
+                    MessageBox.Show("비밀번호를 입력해주세요!");
+                    return;
+                } 
+                else if (loginData.pwRight(userID, out string password) && userPW == password)
+                {
+                    logindata.printInfo(userID, out userPW);
+                    return;
+                }
+                else
+                {
+                    MessageBox.Show("비밀번호가 틀렸습니다.");
+                    return;
+                }
+            }
+            else
+            {
+                MessageBox.Show("아이디가 존재하지 않습니다."); 
+            }
         }
     }
 }

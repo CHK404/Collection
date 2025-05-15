@@ -7,31 +7,35 @@ using System.Windows.Forms;
 
 namespace WindowsFormsApp_14_Collection
 {
-    public class loginData_1<ID, PW>
+    public class loginData_1<TKey, TValue>
     {
-        public Dictionary<ID, PW> id_PW = new Dictionary<ID, PW>();
+        public Dictionary<TKey, TValue> id_PW = new Dictionary<TKey, TValue>();
 
-        public void AddPW(ID id, PW pw)
+        public void AddPW(TKey id, TValue pw)
         {
             id_PW[id] = pw;
         }
+        public bool idExist(TKey id)
+        {
+            return id_PW.ContainsKey(id);
+        }
+        public bool pwRight(TKey id, out TValue pw)
+        {
+            return id_PW.TryGetValue(id,out pw);
+        }
     }
-    public class logindata_2<ID, PN>
+    public class logindata_2<TKey, TValue>
     {
-        public Dictionary<ID, PN> id_PN = new Dictionary<ID, PN>();
-        public void AddPN(ID id, PN pn)
+        public Dictionary<TKey, TValue> id_PN = new Dictionary<TKey, TValue>();
+        public void AddPN(TKey id, TValue pn)
         {
             id_PN[id] = pn;
         }
-        public bool numberExist(ID id)
+        public void printInfo(TKey id, out TValue pn)
         {
-            return id_PN.ContainsKey(id);
-        }
-        public void printInfo()
-        {
-            foreach (var item in id_PN)
+            if (id_PN.TryGetValue(id, out pn))
             {
-                MessageBox.Show($"ID: {item.Key}\r\nPhone Number: {item.Value}");
+                MessageBox.Show($"ID: {id}\r\nPhone Number: {pn}");
             }
         }
     }
