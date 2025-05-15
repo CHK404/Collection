@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -514,6 +515,45 @@ namespace WindowsFormsApp_14_Collection
             scores2.ShowAll();
 
             #endregion
+        }
+
+        private void f_Select_Click(object sender, EventArgs e)
+        {
+            var fileContent = string.Empty;
+            var filePath = string.Empty;
+
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.InitialDirectory = "C:\\";
+                openFileDialog.RestoreDirectory = true;
+                
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    filePath = openFileDialog.FileName;
+                    var filestream = openFileDialog.OpenFile();
+                }
+
+                using (StreamReader sr = new StreamReader("account.txt"))
+                {
+                    string line;
+                    loginData_1<string, string> loginData = new loginData_1<string, string>();
+                    logindata_2<string, string> logindata = new logindata_2<string, string>();
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        var splitData = line.Split(',');
+
+                        if (splitData.Length == 3)
+                        {
+                            loginData.AddPW(splitData[0], splitData[1]);
+                            logindata.AddPN(splitData[0], splitData[2]);
+                        } else if (splitData.Length == 2)
+                        {
+                            loginData.AddPW(splitData[0], splitData[1]);
+                        }
+                    }
+                }
+            }
+
         }
     }
 }
