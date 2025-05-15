@@ -542,14 +542,16 @@ namespace WindowsFormsApp_14_Collection
                     {
                         var splitData = line.Split(',');
 
-                        if (splitData.Length == 3)
+                        if (splitData.Length >= 2)
                         {
                             loginData.AddPW(splitData[0], splitData[1]);
-                            logindata.AddPN(splitData[0], splitData[2]);
-                        } else if (splitData.Length == 2)
-                        {
-                            loginData.AddPW(splitData[0], splitData[1]);
+
+                            if (splitData.Length >= 3)
+                            {
+                                logindata.AddPN(splitData[0], splitData[2]);
+                            }
                         }
+
                     }
                 }
             }
